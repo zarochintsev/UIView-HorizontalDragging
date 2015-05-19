@@ -25,6 +25,10 @@
 
 #import <UIKit/UIKit.h>
 
+//did change frame view
+
+typedef void (^HorizontalDraggingDidChangeFrameViewHandler) (CGRect frame);
+
 /**
  *  @category UIView+HorizontalDragging
  *  @author Alex Zarochintsev
@@ -65,5 +69,11 @@
  *  This is right offset to view
  */
 @property (assign, nonatomic) NSInteger rightOffset;
+
+///---------------
+/// @name Handlers
+///---------------
+
+@property (copy, nonatomic) HorizontalDraggingDidChangeFrameViewHandler didChangeFrameViewHandler;
 
 @end

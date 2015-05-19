@@ -26,6 +26,9 @@
 #import "UIView+HorizontalDragging.h"
 #import <objc/runtime.h>
 
+static const void *kDidChangeFrameViewHandlerKey = &kDidChangeFrameViewHandlerKey;
+
+
 @implementation UIView (HorizontalDragging)
 
 #pragma mark - objc / runtime
@@ -62,6 +65,16 @@
 - (NSInteger)rightOffset {
     NSNumber *number = objc_getAssociatedObject(self, @selector(rightOffset));
     return [number integerValue];
+}
+
+// Setter
+- (void)setDidChangeFrameViewHandler:(HorizontalDraggingDidChangeFrameViewHandler)didChangeFrameViewHandler {
+    objc_setAssociatedObject(self, kDidChangeFrameViewHandlerKey, didChangeFrameViewHandler, OBJC_ASSOCIATION_COPY);
+}
+
+// Getter
+- (HorizontalDraggingDidChangeFrameViewHandler)didChangeFrameViewHandler {
+    return objc_getAssociatedObject(self, kDidChangeFrameViewHandlerKey);
 }
 
 #pragma mark - Public
@@ -107,6 +120,10 @@
         recognizer.view.center = CGPointMake([self rightOffset] - recognizer.view.frame.size.width / 2, recognizer.view.center.y);
     } else if (recognizer.view.frame.origin.x < [self leftOffset]) {
         recognizer.view.center = CGPointMake([self leftOffset] + recognizer.view.frame.size.width / 2, recognizer.view.center.y);
+    }
+    
+    if ([self didChangeFrameViewHandler]) {
+        self.didChangeFrameViewHandler(recognizer.view.frame);
     }
 }
 
